@@ -1,0 +1,9 @@
+note0_scaleDegree,note0_beatStrength,note0_duration,note0_beat,note0_measure,note1_scaleDegree,note1_beatStrength,note1_duration,note1_beat,note1_measure,note2_scaleDegree,note2_beatStrength,note2_duration,note2_beat,note2_measure,note3_scaleDegree,note3_beatStrength,note3_duration,note3_beat,note3_measure,prevChord0,prevChord1,prevChord2,targetChord
+2,1.0,2.0,1.0,16,1,0.5,1.0,3.0,16,1,0.5,1.0,3.0,16,7,1.0,2.0,1.0,17,3_minor,4_major,2_minor,3_minor
+1,0.5,1.0,3.0,16,1,0.5,1.0,3.0,16,7,1.0,2.0,1.0,17,7,1.0,1.0,1.0,17,4_major,2_minor,3_minor,4_major
+3,0.25,1.0,4.0,5,2,1.0,0.5,1.0,6,1,0.125,0.5,1.5,6,2,0.25,1.0,2.0,6,7_major,3_major,1_minor,7_major
+2,1.0,0.5,1.0,6,1,0.125,0.5,1.5,6,2,0.25,1.0,2.0,6,1,0.5,1.0,3.0,6,3_major,1_minor,7_major,6_major
+1,0.25,1.0,4.0,6,4,1.0,1.0,1.0,7,3,0.25,1.0,2.0,7,2,0.5,1.0,3.0,7,4_major,1_major,4_major,1_major
+4,1.0,1.0,1.0,7,3,0.25,1.0,2.0,7,2,0.5,1.0,3.0,7,2,0.5,1.0,3.0,7,1_major,4_major,1_major,4_major
+3,0.25,1.0,4.0,3,2,1.0,2.0,1.0,4,1,0.5,1.0,3.0,4,5,0.25,1.0,4.0,4,6_minor,1_major,5_major,6_minor
+2,1.0,2.0,1.0,4,1,0.5,1.0,3.0,4,5,0.25,1.0,4.0,4,1,1.0,2.0,1.0,5,1_major,5_major,6_minor,1_major
