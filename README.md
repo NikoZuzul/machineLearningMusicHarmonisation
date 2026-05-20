@@ -1,118 +1,47 @@
 # Machine Learning Music Harmonisation
 
-A machine learning project for automatic music harmonisation using Python.
+Projekt se bavi automatskom harmonizacijom melodija, tj. predviđanjem akorda za zadanu melodijsku liniju. Kao podloga koristi se JSB/Bach chorales dataset, a glazbeni zapis se pretvara u tablični skup značajki koje opisuju note, trajanja, poziciju u taktu, prethodne akorde i ciljni akord.
 
-## 📋 Overview
+## Dataset
 
-This project explores the use of machine learning techniques to automatically generate harmonic accompaniments for musical melodies. It combines signal processing, deep learning, and music theory to create intelligent harmonic progressions.
+Dataset je podijeljen na `train_data.csv`, `val_data.csv` i `test_data.csv`. Svaki redak predstavlja jedan harmonijski trenutak s melodijskim i ritmičkim značajkama te oznakom `targetChord`. Skripta `extract_data.py` dodatno razdvaja pjesme prema tonalitetu u foldere `major/` i `minor/`, gdje se svaka pjesma sprema kao zaseban CSV. Matrice prijelaza između akorada spremaju se u `major_transition_matrix.csv` i `minor_transition_matrix.csv`.
 
-## 🚀 Features
+## Metode
 
-- Automated melody harmonisation using machine learning
-- Support for various musical genres and styles
-- Real-time harmony generation
-- Music file processing and analysis
-- Deep learning models for harmonic prediction
+### Random Forest
 
-## 💻 Technologies
+Random Forest koristi više stabala odlučivanja za predikciju akorda. Dobar je za interpretaciju jer omogućuje analizu važnosti značajki. U ovom projektu pokazuje da su prethodni akordi, trajanje nota i ritmička pozicija među najvažnijim informacijama za harmonizaciju.
 
-- **Python** - Core language for the project
-- **Machine Learning Libraries** - TensorFlow/PyTorch for neural networks
-- **Audio Processing** - Libraries for music analysis and synthesis
-- **Data Processing** - NumPy, Pandas for data manipulation
+### Gradient Boosting / XGBoost
 
-## 🛠️ Installation
+Gradient Boosting sekvencijalno gradi stabla tako da svako novo stablo ispravlja pogreške prethodnih. U projektu se koristi XGBoost s višeklasnom predikcijom (`multi:softprob`) jer osim najvjerojatnijeg akorda daje i vjerojatnosti svih klasa, što je korisno za Viterbijev algoritam.
 
-1. Clone the repository:
-```bash
-git clone https://github.com/NikoZuzul/machineLearningMusicHarmonisation.git
-cd machineLearningMusicHarmonisation
-```
+### Viterbijev algoritam
 
-2. Install required dependencies:
-```bash
-pip install -r requirements.txt
-```
+Viterbijev algoritam ne bira samo lokalno najbolji akord, nego traži najvjerojatniji cijeli niz akorada. Kombinira vjerojatnosti iz XGBoost modela s matricom prijelaza između akorada. Time se dobiva glazbeno glađa progresija, iako lokalna accuracy metrika ne mora uvijek porasti.
 
-## 📖 Usage
+### Hijerarhijsko klasteriranje
 
-```python
-# Example usage (update based on your actual code)
-from harmonisation import MusicHarmoniser
+Hijerarhijsko klasteriranje koristi se za analizu funkcionalne sličnosti akorada. Svaki akord opisuje se kontekstom, odnosno akordima koji se pojavljuju prije i poslije njega. Udaljenost se računa Jensen-Shannonovom divergencijom, pa se akordi grupiraju prema harmonijskoj ulozi, a ne samo prema nazivu.
 
-# Initialize the harmoniser
-harmoniser = MusicHarmoniser()
+## Struktura datoteka
 
-# Load a melody
-melody = harmoniser.load_music('path/to/melody.wav')
+- `dataLoader.py` – obrađuje originalni JSB chorales dataset, transponira pjesme u C-dur ili a-mol i stvara značajke pomoću kliznog prozora.
+- `extract_data.py` – parsira `train_data.csv`, `val_data.csv` i `test_data.csv`, razdvaja pjesme u `major/` i `minor/` te računa frekvencije i prijelaze akorada.
+- `randomForest.py` – trenira Random Forest model, radi grid search i ispisuje metrike kao što su accuracy, macro F1, recall, function mismatch i Jaccardova udaljenost.
+- `randomForest2.py` – proširena analiza s dodatnim značajkama, budućim notama, intervalima, Random Forestom i logističkom regresijom.
+- `gradientBoostingViterbi.py` – glavna skripta za XGBoost model, autoregresivnu predikciju, Viterbijevo zaglađivanje i usporedbu RAW/Viterbi rezultata.
+- `AdvancedHarmonicAnalyzer.py` – gradi matrice prijelaza, kontekstne vektore, harmonijske udaljenosti i hijerarhijske klastere akorada.
+- `diagnostics.py` – pomoćne funkcije za crtanje grafova, provjeru prenaučenosti, learning rate analizu i usporedbu Viterbi/RAW rezultata.
+- `proba.py`, `proba2.py`, `proba3.py` – pomoćne eksperimentalne skripte za rad s vjerojatnostima modela.
+- `playScore.py` – skripta za reprodukciju ili rad s glazbenim zapisom.
+- `catBoost.py` – rezervirana/eksperimentalna datoteka za CatBoost pristup.
+- `major/` i `minor/` – obrađene pjesme odvojene prema tonalitetu.
+- `train_data.csv`, `val_data.csv`, `test_data.csv` – početni skupovi podataka za treniranje, validaciju i testiranje.
+- `evaluation_results.csv`, `evaluation_results2.csv` – spremljeni rezultati evaluacije modela.
+- `major_transition_matrix.csv`, `minor_transition_matrix.csv` – prijelazne matrice akorada.
+- `output.mid` – primjer generiranog ili obrađenog MIDI izlaza.
 
-# Generate harmonisation
-harmonies = harmoniser.harmonise(melody)
+## Zaključak
 
-# Save the result
-harmoniser.save('output_harmonisation.wav', harmonies)
-```
-
-## 🎵 How It Works
-
-The project uses machine learning models to:
-1. Analyze input melodies
-2. Extract musical features
-3. Predict appropriate harmonic accompaniments
-4. Generate the final harmonic output
-
-## 📁 Project Structure
-
-```
-machineLearningMusicHarmonisation/
-├── README.md
-├── requirements.txt
-├── src/
-│   ├── models/          # ML models
-│   ├── harmonisation/   # Harmonisation logic
-│   ├── audio/          # Audio processing utilities
-│   └── utils/          # Helper functions
-├── data/               # Dataset directory
-├── notebooks/          # Jupyter notebooks
-└── tests/              # Unit tests
-```
-
-## 🧠 Models
-
-[Add information about the specific models used]
-
-## 📊 Dataset
-
-[Add information about training data sources and format]
-
-## 🔄 Training
-
-```bash
-python train.py --epochs 100 --batch_size 32
-```
-
-[Add specific training instructions]
-
-## 📈 Results
-
-[Add information about model performance and results]
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to open issues or submit pull requests.
-
-## 📝 License
-
-[Add your license information]
-
-## 👤 Author
-
-**NikoZuzul**
-
-## 📧 Contact
-
-For questions or suggestions, please open an issue on GitHub.
-
----
-
-**Note:** This README is a template. Please update it with specific details about your project's implementation, datasets, model architectures, and usage examples.
+Projekt kombinira lokalne klasifikacijske modele i sekvencijalno modeliranje. Random Forest i XGBoost predviđaju akorde iz značajki melodije i konteksta, dok Viterbijev algoritam poboljšava globalni harmonijski tok. Dodatna analiza pomoću informacijskih udaljenosti i klasteriranja omogućuje interpretaciju akorada kao funkcionalnih elemenata harmonijskog prostora.
